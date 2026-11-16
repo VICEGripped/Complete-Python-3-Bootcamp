@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#14161a" />
+  <title>Recipe Lab</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+  <script>
+    // Apply saved theme before paint (dark by default)
+    try { document.documentElement.dataset.theme = localStorage.getItem("recipeLab.theme") || "dark"; }
+    catch { document.documentElement.dataset.theme = "dark"; }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <h1>🧪 Recipe Lab</h1>
+    <button id="themeToggle" class="icon-btn" aria-label="Toggle light/dark mode">🌙</button>
+  </header>
+
+  <main>
+    <!-- CREATE -->
+    <section id="view-create" class="view active" aria-label="Create a recipe">
+      <form id="ideaForm" class="card">
+        <label for="ideaInput" class="label-big">What are you craving?</label>
+        <textarea id="ideaInput" rows="3" maxlength="1000"
+          placeholder="e.g. buffalo chicken mac n cheese"></textarea>
+        <div class="chips" id="ideaChips">
+          <button type="button" class="chip">Buffalo chicken mac n cheese</button>
+          <button type="button" class="chip">Big Mac bowl</button>
+          <button type="button" class="chip">Something like Jack in the Box tacos</button>
+          <button type="button" class="chip">Korean beef rice bowl</button>
+          <button type="button" class="chip">Breakfast burrito I can prep for the week</button>
+        </div>
+        <button type="submit" id="generateBtn" class="btn btn-primary btn-block">🔥 Cook it up</button>
+      </form>
+
+      <div id="loading" class="card loading hidden" role="status" aria-live="polite">
+        <div class="spinner" aria-hidden="true"></div>
+        <p id="loadingText">Firing up the lab…</p>
+        <p class="muted small">This usually takes 30–90 seconds.</p>
+      </div>
+
+      <div id="errorBox" class="card error hidden" role="alert"></div>
+
+      <div id="result"></div>
+    </section>
+
+    <!-- MY RECIPES -->
+    <section id="view-recipes" class="view" aria-label="My recipes">
+      <div class="card filters">
+        <input id="searchInput" type="search" placeholder="🔍 Search recipes, ingredients, notes…" />
+        <div class="filter-row">
+          <select id="filterTag" aria-label="Filter by style"><option value="">All styles</option></select>
+          <select id="filterRating" aria-label="Minimum rating">
+            <option value="0">Any rating</option>
+            <option value="3">3★ and up</option>
+            <option value="4">4★ and up</option>
+            <option value="5">5★ only</option>
+          </select>
+          <select id="sortBy" aria-label="Sort">
+            <option value="new">Newest</option>
+            <option value="rating">Top rated</option>
+            <option value="cost">Cheapest</option>
+            <option value="name">A–Z</option>
+          </select>
+        </div>
+        <label class="toggle"><input type="checkbox" id="filterGig" /> 🎒 Gig day friendly only</label>
+      </div>
+
+      <div id="recipeList"></div>
+
+      <div id="groceryBar" class="sticky-bar hidden">
+        <button id="buildGroceryBtn" class="btn btn-primary btn-block">🛒 Grocery list</button>
+      </div>
+    </section>
+
+    <!-- RECIPE DETAIL (saved) -->
+    <section id="view-detail" class="view" aria-label="Recipe">
+      <button id="backBtn" class="btn btn-ghost">← My Recipes</button>
+      <div id="detail"></div>
+    </section>
+
+    <!-- GROCERY LIST -->
+    <section id="view-grocery" class="view" aria-label="Grocery list">
+      <div id="grocery"></div>
+    </section>
+  </main>
+
+  <nav class="tabbar" aria-label="Main">
+    <button class="tab active" data-view="create"><span>🧪</span>Create</button>
+    <button class="tab" data-view="recipes"><span>📖</span>My Recipes</button>
+    <button class="tab" data-view="grocery"><span>🛒</span>Grocery</button>
+  </nav>
+
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

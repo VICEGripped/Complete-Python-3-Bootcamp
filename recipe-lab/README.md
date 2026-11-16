@@ -23,30 +23,33 @@ Node.js is the free program that runs the app on your computer.
    ⚠️ The Console only shows the key once, so paste it somewhere safe right away. Treat it like a password and never share it or post it online.
 
 ### Step 3: Get the app folder onto your computer
-Download this repo from GitHub: open the **branch** page, click **Code → Download ZIP**, and unzip it. The app is in the `recipe-lab` folder.
+Download the zip, or on GitHub open the branch and click **Code → Download ZIP**. Unzip it. The app is in the `recipe-lab` folder.
 
-### Step 4: Add your key in a `.env` file
-1. In the `recipe-lab` folder, find the file named `.env.example`.
-2. Make a copy of it and name the copy exactly **`.env`**, with nothing before the dot.
-   - On a Mac, Finder hides files that start with a dot. Press `Cmd + Shift + .` to show them.
-   - On Windows, make sure the name doesn't end up as `.env.txt`. Turn on **View → File name extensions** to check.
-3. Open `.env` in a text editor (TextEdit or Notepad) and replace `paste-your-key-here` with your key:
-   ```
-   ANTHROPIC_API_KEY=sk-ant-api03-xxxxxxxx...
-   ```
-   Don't put spaces or quotes around the key. Save the file.
+### Step 4: Double-click to start
+Open the `recipe-lab` folder and double-click the start file for your computer:
 
-### Step 5: Install and start the app
-In your terminal, go into the folder. The easiest way is to type `cd ` (with a space after it) and then drag the `recipe-lab` folder into the terminal window. Press Enter, then run:
+- **Mac:** `Start Recipe Lab (Mac).command`
+  - The first time, macOS may say it "can't be opened because it is from an unidentified developer." If so, **right-click** the file (or Control-click it), choose **Open**, then click **Open** again. You only have to do this once.
+- **Windows:** `Start Recipe Lab (Windows).bat`
+  - If a blue "Windows protected your PC" box appears, click **More info**, then **Run anyway**.
+
+A black terminal window opens. The first time:
+1. It installs what the app needs (about a minute).
+2. It asks for your API key. Paste it (`Cmd+V` on Mac, right-click on Windows) and press **Enter**. The key is saved in a file named `.env`, so you're only asked once.
+3. Your browser opens to the app at **http://localhost:3000**.
+
+**Keep the black window open while you use the app.** Closing it stops the app. Next time, just double-click the start file again.
+
+<details>
+<summary>Prefer the terminal? (optional)</summary>
 
 ```
+cd path/to/recipe-lab
 npm install
 npm start
 ```
-
-You only need `npm install` the first time. When you see **"Recipe Lab is running!"**, open **http://localhost:3000** in your browser.
-
-To stop the app, click the terminal and press `Ctrl + C`. To use it again later, `cd` into the folder and run `npm start`.
+You can also make the `.env` file yourself: copy `.env.example`, name the copy `.env`, and put your key after `ANTHROPIC_API_KEY=`.
+</details>
 
 ---
 
@@ -73,16 +76,16 @@ Saved recipes are stored in **each browser separately**. Recipes saved on your p
 - **Dark mode** is on by default. Tap ☀️/🌙 in the top corner to switch.
 
 ## Customizing
-Your cooking profile (tastes, budget, equipment, no-seafood rule) is in **`recipe-prompt.js`** under `SYSTEM_PROMPT`. Edit it in any text editor, then restart the app (`Ctrl + C`, then `npm start`).
+Your cooking profile (tastes, budget, equipment, no-seafood rule) is in **`recipe-prompt.js`** under `SYSTEM_PROMPT`. Edit it in any text editor, then close the black window and double-click the start file again.
 
 ## Troubleshooting
 | Problem | Fix |
 |---|---|
-| "No API key found" when starting | The `.env` file is missing or misnamed. See Step 4. |
-| "Your API key was rejected" | The key was copied wrong. Paste it again into `.env` and restart. |
+| Double-clicking does nothing / "unidentified developer" | Mac: right-click the file → Open. Windows: More info → Run anyway. |
+| "Node.js isn't installed yet" | Do Step 1, then double-click the start file again. |
+| "Your API key was rejected" | The key was copied wrong. Delete the `.env` file in the folder (on a Mac press `Cmd+Shift+.` to see it), then double-click the start file and paste the key again. |
 | "out of credits" or "Too many requests" | Add credit in the Console under Billing, or wait a minute. |
-| "Couldn't reach the Recipe Lab server" | The terminal running `npm start` was closed. Start it again. |
-| `npm: command not found` | Node.js isn't installed. Do Step 1, then close and reopen the terminal. |
+| "Couldn't reach the Recipe Lab server" | The black window was closed. Double-click the start file again. |
 
 ## Files
 - `server.js`: small local server that talks to Claude. Your key stays here and is never sent to the browser.

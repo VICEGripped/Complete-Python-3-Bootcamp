@@ -3,6 +3,7 @@
 // Your API key stays on this computer (read from the .env file) and is never sent to the browser.
 
 import http from "node:http";
+import { exec } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -21,15 +22,38 @@ try {
 const PORT = Number(process.env.PORT) || 3000;
 const MODEL = "claude-opus-5-5";
 
-if (!process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_API_KEY.includes("paste-your-key")) {
-  console.error(
-    "\n  ⚠️  No API key found.\n" +
-      "  Make a file named .env in the recipe-lab folder (copy .env.example)\n" +
-      "  and put your key in it like this:\n\n" +
-      "     ANTHROPIC_API_KEY=sk-ant-...\n\n" +
-      "  Then run  npm start  again.\n"
-  );
-  process.exit(1);
+const hasKey = () =>
+  !!process.env.ANTHROPIC_API_KEY && !process.env.ANTHROPIC_API_KEY.includes("paste-your-key");
+
+if (!hasKey()) {
+  if (process.stdin.isTTY) {
+    // First run: ask for the key right here and save it to .env for next time.
+    const readline = await import("node:readline/promises");
+    const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+    console.log(
+      "\n  👋 Welcome to Recipe Lab! First-time setup.\n" +
+        "  Paste your Claude API key below (it starts with sk-ant-) and press Enter.\n" +
+        "  Get one at https://platform.claude.com -> API Keys.\n"
+    );
+    let key = "";
+    while (!key.startsWith("sk-ant-")) {
+      key = (await rl.question("  API key: ")).trim().replace(/^["']|["']$/g, "");
+      if (!key.startsWith("sk-ant-")) console.log("  That doesn't look like a Claude API key (it should start with sk-ant-). Try again.");
+    }
+    rl.close();
+    fs.writeFileSync(path.join(here, ".env"), `ANTHROPIC_API_KEY=${key}\n`);
+    process.env.ANTHROPIC_API_KEY = key;
+    console.log("  ✅ Key saved to the .env file. You won't be asked again.\n");
+  } else {
+    console.error(
+      "\n  ⚠️  No API key found.\n" +
+        "  Make a file named .env in the recipe-lab folder (copy .env.example)\n" +
+        "  and put your key in it like this:\n\n" +
+        "     ANTHROPIC_API_KEY=sk-ant-...\n\n" +
+        "  Then start the app again.\n"
+    );
+    process.exit(1);
+  }
 }
 
 const client = new Anthropic(); // reads ANTHROPIC_API_KEY from the environment
@@ -202,6 +226,23 @@ const server = http.createServer(async (req, res) => {
   });
 });
 
+server.on("error", (err) => {
+  if (err.code === "EADDRINUSE") {
+    console.error(`\n  ⚠️  Recipe Lab already seems to be running (port ${PORT} is busy).\n  Just open http://localhost:${PORT} in your browser.\n`);
+  } else {
+    console.error(err);
+  }
+  process.exit(1);
+});
+
 server.listen(PORT, () => {
-  console.log(`\n  🧪 Recipe Lab is running!\n  Open this in your browser:  http://localhost:${PORT}\n  (Press Ctrl+C to stop.)\n`);
+  const url = `http://localhost:${PORT}`;
+  console.log(
+    `\n  🧪 Recipe Lab is running!\n  Open this in your browser:  ${url}\n` +
+      `  Keep this window open while you use the app. Close it (or press Ctrl+C) to stop.\n`
+  );
+  if (!process.env.NO_OPEN) {
+    const cmd = process.platform === "darwin" ? `open ${url}` : process.platform === "win32" ? `start "" ${url}` : `xdg-open ${url}`;
+    exec(cmd, () => {});
+  }
 });
